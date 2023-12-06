@@ -2,5 +2,6 @@ import Checkbox from "./CheckBox";
 import Radio from "./Radio";
 import Select from "./Select";
 import Input from "./Input";
+import TextArea from "./TextArea";
 
-export { Checkbox, Radio, Select, Input };
+export { Checkbox, Radio, Select, Input, TextArea };

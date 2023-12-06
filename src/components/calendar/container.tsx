@@ -5,21 +5,28 @@ import {
   Event,
   SlotInfo,
 } from "react-big-calendar";
-import withDragAndDrop, {
-  withDragAndDropProps,
-} from "react-big-calendar/lib/addons/dragAndDrop";
 import format from "date-fns/format";
 import parse from "date-fns/parse";
 import startOfWeek from "date-fns/startOfWeek";
 import getDay from "date-fns/getDay";
 import enUS from "date-fns/locale/en-US";
-import addHours from "date-fns/addHours";
-import startOfHour from "date-fns/startOfHour";
 
-import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+
 import { getDateRange } from "../../utils/date-fnc";
 import AddEvtModal from "../add-event-modal/";
+
+const locales = {
+  "en-US": enUS,
+};
+
+const localizer = dateFnsLocalizer({
+  format,
+  parse,
+  startOfWeek,
+  getDay,
+  locales,
+});
 
 const Calendar: FC = () => {
   const { min, max } = getDateRange();
@@ -31,28 +38,22 @@ const Calendar: FC = () => {
   const [events, setEvents] = useState<Event[]>([
     {
       title: "Learn cool stuff",
-      start,
-      end,
+      start: new Date(),
+      end: new Date(),
     },
   ]);
 
-  // call API
+  // const onEventResize: withDragAndDropProps["onEventResize"] = (data) => {
+  //   const { start, end } = data;
 
-  const onEventResize: withDragAndDropProps["onEventResize"] = (data) => {
-    const { start, end } = data;
-
-    setEvents((currentEvents) => {
-      const firstEvent = {
-        start: new Date(start),
-        end: new Date(end),
-      };
-      return [...currentEvents, firstEvent];
-    });
-  };
-
-  const onEventDrop: withDragAndDropProps["onEventDrop"] = (data) => {
-    console.log(data);
-  };
+  //   setEvents((currentEvents) => {
+  //     const firstEvent = {
+  //       start: new Date(start),
+  //       end: new Date(end),
+  //     };
+  //     return [...currentEvents, firstEvent];
+  //   });
+  // };
 
   const handleSelect = useCallback((slotInfo: SlotInfo) => {
     const { start, end } = slotInfo;
@@ -75,19 +76,17 @@ const Calendar: FC = () => {
 
   return (
     <>
-      <DnDCalendar
+      <BigCalendar
         defaultView="day"
         events={events}
         localizer={localizer}
-        onEventDrop={onEventDrop}
-        onEventResize={onEventResize}
-        resizable
-        style={{ height: "100%" }}
+        style={{ height: "90vh" }}
         min={min}
         max={max}
         step={15}
         selectable
         onSelectSlot={handleSelect}
+        showMultiDayTimes
       />
       <AddEvtModal
         isOpen={isOpen}
@@ -99,22 +98,9 @@ const Calendar: FC = () => {
   );
 };
 
-const locales = {
-  "en-US": enUS,
-};
-const endOfHour = (date: Date): Date => addHours(startOfHour(date), 1);
-const now = new Date();
-const start = endOfHour(now);
-const end = addHours(start, 2);
-// The types here are `object`. Strongly consider making them better as removing `locales` caused a fatal error
-const localizer = dateFnsLocalizer({
-  format,
-  parse,
-  startOfWeek,
-  getDay,
-  locales,
-});
-
-const DnDCalendar = withDragAndDrop(BigCalendar);
+// const endOfHour = (date: Date): Date => addHours(startOfHour(date), 1);
+// const now = new Date();
+// const start = endOfHour(now);
+// const end = addHours(start, 2);
 
 export default Calendar;
