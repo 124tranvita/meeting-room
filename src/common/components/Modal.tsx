@@ -50,7 +50,9 @@ const Modal: React.FC<ModalProps> = ({
                       {title}
                     </Dialog.Title>
                     <hr className="my-3" />
-                    <div className="mt-2">{children}</div>
+                    <div className="h-85vh overflow-y-auto mt-2">
+                      {children}
+                    </div>
                   </Dialog.Panel>
                 </div>
               </Transition.Child>

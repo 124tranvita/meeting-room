@@ -52,3 +52,14 @@ export const formatWithOutTimezone = (value: string | Date) => {
   const formattedDate = value instanceof Date ? value : formatToDate(value);
   return formattedDate.toISOString().substring(0, 16);
 };
+
+/** Return the array of all days in month */
+export const getDayInMonth = () => {
+  const date = new Date();
+  const currentYear = date.getFullYear();
+  const currentMonth = date.getMonth() + 1; // months are 0-based
+
+  const days = new Date(currentYear, currentMonth, 0).getDate();
+
+  return Array.from({ length: days }, (_, i) => i + 1);
+};

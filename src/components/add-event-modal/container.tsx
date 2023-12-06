@@ -7,9 +7,10 @@ import {
   useMemo,
 } from "react";
 import { Form, FormikContext, useFormik } from "formik";
-import { Modal } from "../../common/components";
+import { Button, Modal } from "../../common/components";
 import {
   Checkbox,
+  CheckboxGroup,
   Input,
   Radio,
   RadioGroup,
@@ -19,6 +20,7 @@ import {
 import { dateFormatter } from "../../utils/date-func";
 import * as Constants from "../../common/constants";
 import { FormikProps } from "./type";
+import { getDayPulldownData, getRepeatType } from "../../utils/utils";
 
 type Props = {
   isOpen: boolean;
@@ -35,14 +37,31 @@ const AddEvtModal: FC<Props> = ({ isOpen, setIsOpen, startDt, endDt }) => {
       description: "",
       startDt: dateFormatter(startDt, "yyyy-MM-dd'T'HH:mm"),
       endDt: dateFormatter(endDt, "yyyy-MM-dd'T'HH:mm"),
-      allDay: "",
+      allDay: false,
       rooms: [],
       type: Constants.BookingType.External,
       confirmed: "",
+      repeatType: Constants.RepeatType.None,
+      repInterval: "1",
+      repEndDt: dateFormatter(new Date(), "yyyy-MM-dd"),
+      skip: false,
+      repDay0: "",
+      repDay1: "",
+      repDay2: "",
+      repDay3: "",
+      repDay4: "",
+      repDay5: "",
+      repDay6: "",
+      monthlySelect: Constants.MonthlyType.Absolute,
+      monthAbsolute: "",
+      monthRelativeOrd: "",
+      monthRelativeDay: "",
     };
   }, [endDt, startDt]);
 
-  const onSubmit = useCallback(() => {}, []);
+  const onSubmit = useCallback((values: FormikProps) => {
+    alert(JSON.stringify(values));
+  }, []);
 
   /** Formik bag */
   const formikBag = useFormik({
@@ -58,6 +77,14 @@ const AddEvtModal: FC<Props> = ({ isOpen, setIsOpen, startDt, endDt }) => {
     formikBag.setValues(initialValues);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialValues]);
+
+  const hanldSubmit = useCallback(() => {
+    try {
+      formikBag.submitForm();
+    } catch (error) {
+      console.log(error);
+    }
+  }, [formikBag]);
 
   /** Handle close modal */
   const closeModal = useCallback(() => {
@@ -75,14 +102,17 @@ const AddEvtModal: FC<Props> = ({ isOpen, setIsOpen, startDt, endDt }) => {
           <Checkbox name="allDay">
             <span>All day</span>
           </Checkbox>
-          <Select label="Rooms" name="rooms" multiple>
-            <option value={"room1"}>Room 1</option>
-            <option value={"room2"}>Room 2</option>
-          </Select>
-          <Select label="Type" name="type">
-            <option value={Constants.BookingType.External}>External</option>
-            <option value={Constants.BookingType.Internal}>Internal</option>
-          </Select>
+          <Select
+            label="Rooms"
+            name="rooms"
+            items={Constants.BOOKING_TYPE_ITEM}
+            multiple
+          />
+          <Select
+            label="Type"
+            name="type"
+            items={Constants.BOOKING_TYPE_ITEM}
+          />
           <RadioGroup label="Confirmation status" name="confirmed">
             <Radio name="confirmed" value={Constants.ConfirmStatus.Confirmed}>
               <span>Confirmed</span>
@@ -91,15 +121,135 @@ const AddEvtModal: FC<Props> = ({ isOpen, setIsOpen, startDt, endDt }) => {
               <span>Tentative</span>
             </Radio>
           </RadioGroup>
-          <RadioGroup label="Repeat type" name="confirmed">
-            <Radio name="confirmed" value={Constants.ConfirmStatus.Confirmed}>
-              <span>Confirmed</span>
-            </Radio>
-            <Radio name="confirmed" value={Constants.ConfirmStatus.Tentative}>
-              <span>Tentative</span>
-            </Radio>
-          </RadioGroup>
+          <div className="flex flex-col md:flex-row w-full">
+            <div className="w-full md:w-1/3">
+              <RadioGroup label="Repeat type" name="repeatType">
+                <Radio name="repeatType" value={Constants.RepeatType.None}>
+                  <span>None</span>
+                </Radio>
+                <Radio name="repeatType" value={Constants.RepeatType.Daily}>
+                  <span>Daily</span>
+                </Radio>
+                <Radio name="repeatType" value={Constants.RepeatType.Weekly}>
+                  <span>Weekly</span>
+                </Radio>
+                <Radio name="repeatType" value={Constants.RepeatType.Monthly}>
+                  <span>Monthly</span>
+                </Radio>
+                <Radio name="repeatType" value={Constants.RepeatType.Yearly}>
+                  <span>Yearly</span>
+                </Radio>
+              </RadioGroup>
+            </div>
+            {/* Repeat configuration */}
+            <div className="w-full md:w-2/3">
+              {formikBag.values.repeatType !== Constants.RepeatType.None ? (
+                <>
+                  <Input
+                    label={`Repeat every ${getRepeatType(
+                      formikBag.values.repeatType
+                    )}(s)`}
+                    name="repInterval"
+                    type="text"
+                    size="small"
+                  />
+                  <Input
+                    label="Repeat end date"
+                    name="repEndDt"
+                    type="date"
+                    className="w-48"
+                    size="small"
+                  />
+                  <Checkbox name="skip">
+                    <span>Skip past conflicts</span>
+                  </Checkbox>
+                  {/* Display day selection only when Weekly is selected */}
+                  {formikBag.values.repeatType ===
+                    Constants.RepeatType.Weekly && (
+                    <div className="flex">
+                      <CheckboxGroup label="Repeat day" name="repDay">
+                        {Constants.REP_DAY.map((item) => (
+                          <span key={item.name} className="mr-2">
+                            <Checkbox name={item.name}>
+                              <span className="font-normal">{item.label}</span>
+                            </Checkbox>
+                          </span>
+                        ))}
+                      </CheckboxGroup>
+                    </div>
+                  )}
+                  {/* Display month selection only when Monthly is selected */}
+                  {formikBag.values.repeatType ===
+                    Constants.RepeatType.Monthly && (
+                    <div className="flex">
+                      <RadioGroup label="Monthly settings" name="monthlySelect">
+                        <div className="flex">
+                          <Radio
+                            name="monthlySelect"
+                            value={Constants.MonthlyType.Absolute}
+                          >
+                            <span className="font-normal mr-3">On day</span>
+                          </Radio>
+                          <Select
+                            name="monthAbsolute"
+                            items={getDayPulldownData()}
+                            size="small"
+                            disabled={
+                              formikBag.values.monthlySelect !==
+                              Constants.MonthlyType.Absolute
+                            }
+                          />
+                        </div>
+                        <div className="flex">
+                          <Radio
+                            name="monthlySelect"
+                            value={Constants.MonthlyType.Relative}
+                          >
+                            <span className="font-normal mr-3">On the</span>
+                          </Radio>
+                          <Select
+                            name="monthRelativeOrd"
+                            items={Constants.MONTH_RELATIVE_ORD}
+                            size="small"
+                            disabled={
+                              formikBag.values.monthlySelect !==
+                              Constants.MonthlyType.Relative
+                            }
+                          />
+                          <Select
+                            name="monthRelativeDay"
+                            items={Constants.MONTH_RELATIVE_DAY}
+                            size="small"
+                            disabled={
+                              formikBag.values.monthlySelect !==
+                              Constants.MonthlyType.Relative
+                            }
+                          />
+                        </div>
+                      </RadioGroup>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <></>
+              )}
+            </div>
+          </div>
         </Form>
+        <div className="flex justify-end mt-4">
+          <Button
+            type="submit"
+            label="Add"
+            variant="primary"
+            onClick={hanldSubmit}
+          />
+          <Button
+            type="button"
+            label="Close"
+            variant="danger"
+            onClick={closeModal}
+          />
+        </div>
       </FormikContext.Provider>
     </Modal>
   );
