@@ -63,3 +63,21 @@ export const getDayInMonth = () => {
 
   return Array.from({ length: days }, (_, i) => i + 1);
 };
+
+/** Calculation hours duration between 2 value */
+export const getDuration = (value1: string | Date, value2: string | Date) => {
+  const start = value1 instanceof Date ? value1 : formatToDate(value1);
+  const end = value2 instanceof Date ? value2 : formatToDate(value2);
+
+  const durationObj = DateFns.intervalToDuration({ start, end });
+
+  const years = durationObj.years ? `${durationObj.years} years(s)` : "";
+  const months = durationObj.months ? `${durationObj.months} month(s)` : "";
+  const days = durationObj.days ? `${durationObj.days} day(s)` : "";
+  const hours = durationObj.hours ? `${durationObj.hours} hour(s)` : "";
+  const minutes = durationObj.minutes ? `${durationObj.minutes} minute(s)` : "";
+
+  const arr = [years, months, days, hours, minutes].filter((item) => item);
+
+  return arr.join(" ");
+};

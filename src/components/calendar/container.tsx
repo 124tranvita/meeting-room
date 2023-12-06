@@ -17,6 +17,7 @@ import { getDateRange } from "../../utils/date-fnc";
 import AddEvtModal from "../add-event-modal/";
 
 import { EVENTS } from "../../assets/dev/EVENTS";
+import { EntryEvent } from "../../common/model";
 
 const locales = {
   "en-US": enUS,
@@ -37,7 +38,7 @@ const Calendar: FC = () => {
     start: new Date(),
     end: new Date(),
   });
-  const [events, setEvents] = useState<Event[]>(EVENTS);
+  const [events, setEvents] = useState<EntryEvent[]>(EVENTS);
 
   // const onEventResize: withDragAndDropProps["onEventResize"] = (data) => {
   //   const { start, end } = data;
@@ -51,13 +52,23 @@ const Calendar: FC = () => {
   //   });
   // };
 
-  const handleSelect = useCallback((slotInfo: SlotInfo) => {
+  const handleSelectSlot = useCallback((slotInfo: SlotInfo) => {
     const { start, end } = slotInfo;
     setEventTime({
       start,
       end,
     });
     setIsOpen(true);
+  }, []);
+
+  const handleSelectEvent = useCallback((event: Event) => {
+    // const { start, end } = event;
+    console.log(event);
+    // setEventTime({
+    //   start,
+    //   end,
+    // });
+    // setIsOpen(true);
   }, []);
 
   return (
@@ -71,7 +82,8 @@ const Calendar: FC = () => {
         max={max}
         step={15}
         selectable
-        onSelectSlot={handleSelect}
+        onSelectSlot={handleSelectSlot}
+        onSelectEvent={handleSelectEvent}
         showMultiDayTimes
       />
       <AddEvtModal

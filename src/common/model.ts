@@ -1,8 +1,9 @@
-export type FormikProps = {
-  name: string;
+export type EntryEvent = {
+  id: string;
+  title: string;
+  start: Date;
+  end: Date;
   description: string;
-  startDt: string;
-  endDt: string;
   allDay: boolean;
   rooms: string[];
   type: string;
@@ -26,12 +27,4 @@ export type FormikProps = {
   lastUpdated?: string;
   createdBy?: string;
   modifiedBy?: string;
-};
-
-export type Event = {
-  id: string;
-  title: string;
-  start: Date;
-  end: Date;
-  resourceId: string;
 };

@@ -7,7 +7,6 @@ import {
   useMemo,
 } from "react";
 import { Form, FormikContext, useFormik } from "formik";
-import { Event } from "react-big-calendar";
 import { Button, Modal } from "../../common/components";
 import {
   Checkbox,
@@ -18,14 +17,15 @@ import {
   Select,
   TextArea,
 } from "../../common/components/formik";
-import { dateFormatter } from "../../utils/date-func";
+import { dateFormatter, getDuration } from "../../utils/date-func";
 import * as Constants from "../../common/constants";
 import { getDayPulldownData, getRepeatType } from "../../utils/utils";
+import { EntryEvent } from "../../common/model";
 import { FormikProps } from "./type";
 
 type Props = {
-  events: Event[];
-  setEvents: Dispatch<SetStateAction<Event[]>>;
+  events: EntryEvent[];
+  setEvents: Dispatch<SetStateAction<EntryEvent[]>>;
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   startDt: Date;
@@ -72,11 +72,35 @@ const AddEvtModal: FC<Props> = ({
   /** Form submit */
   const onSubmit = useCallback(
     (values: FormikProps) => {
-      const event: Event = {
+      const event: EntryEvent = {
+        id: values.name,
         title: values.name,
         start: new Date(values.startDt),
         end: new Date(values.endDt),
+        description: values.description,
         allDay: values.allDay,
+        rooms: values.rooms,
+        type: values.type,
+        confirmed: values.confirmed,
+        repeatType: values.repeatType,
+        repInterval: values.repInterval,
+        repEndDt: values.repEndDt,
+        skip: values.skip,
+        repDay0: values.repDay0,
+        repDay1: values.repDay1,
+        repDay2: values.repDay2,
+        repDay3: values.repDay3,
+        repDay4: values.repDay4,
+        repDay5: values.repDay5,
+        repDay6: values.repDay6,
+        monthlySelect: values.monthlySelect,
+        monthAbsolute: values.monthAbsolute,
+        monthRelativeOrd: values.monthRelativeOrd,
+        monthRelativeDay: values.monthRelativeDay,
+        duration: getDuration(values.startDt, values.endDt),
+        lastUpdated: "",
+        createdBy: "Username",
+        modifiedBy: "",
       };
 
       setEvents(events.concat(event));
