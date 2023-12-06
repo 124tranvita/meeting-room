@@ -7,6 +7,7 @@ import {
   useMemo,
 } from "react";
 import { Form, FormikContext, useFormik } from "formik";
+import { Event } from "react-big-calendar";
 import { Button, Modal } from "../../common/components";
 import {
   Checkbox,
@@ -19,17 +20,26 @@ import {
 } from "../../common/components/formik";
 import { dateFormatter } from "../../utils/date-func";
 import * as Constants from "../../common/constants";
-import { FormikProps } from "./type";
 import { getDayPulldownData, getRepeatType } from "../../utils/utils";
+import { FormikProps } from "./type";
 
 type Props = {
+  events: Event[];
+  setEvents: Dispatch<SetStateAction<Event[]>>;
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   startDt: Date;
   endDt: Date;
 };
 
-const AddEvtModal: FC<Props> = ({ isOpen, setIsOpen, startDt, endDt }) => {
+const AddEvtModal: FC<Props> = ({
+  events,
+  setEvents,
+  isOpen,
+  setIsOpen,
+  startDt,
+  endDt,
+}) => {
   /** Formik initial values */
   const initialValues: FormikProps = useMemo(() => {
     return {
@@ -59,9 +69,22 @@ const AddEvtModal: FC<Props> = ({ isOpen, setIsOpen, startDt, endDt }) => {
     };
   }, [endDt, startDt]);
 
-  const onSubmit = useCallback((values: FormikProps) => {
-    alert(JSON.stringify(values));
-  }, []);
+  /** Form submit */
+  const onSubmit = useCallback(
+    (values: FormikProps) => {
+      const event: Event = {
+        title: values.name,
+        start: new Date(values.startDt),
+        end: new Date(values.endDt),
+        allDay: values.allDay,
+      };
+
+      setEvents(events.concat(event));
+
+      localStorage.setItem("events", JSON.stringify(events.concat(event)));
+    },
+    [events, setEvents]
+  );
 
   /** Formik bag */
   const formikBag = useFormik({
@@ -78,18 +101,20 @@ const AddEvtModal: FC<Props> = ({ isOpen, setIsOpen, startDt, endDt }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialValues]);
 
-  const hanldSubmit = useCallback(() => {
-    try {
-      formikBag.submitForm();
-    } catch (error) {
-      console.log(error);
-    }
-  }, [formikBag]);
-
   /** Handle close modal */
   const closeModal = useCallback(() => {
     setIsOpen(false);
   }, [setIsOpen]);
+
+  /** Handle submit form */
+  const hanldSubmit = useCallback(() => {
+    try {
+      formikBag.submitForm();
+      closeModal();
+    } catch (error) {
+      console.log(error);
+    }
+  }, [closeModal, formikBag]);
 
   return (
     <Modal title="Add Entry" closeModal={closeModal} isOpen={isOpen}>

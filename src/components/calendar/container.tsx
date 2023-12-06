@@ -16,6 +16,8 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import { getDateRange } from "../../utils/date-fnc";
 import AddEvtModal from "../add-event-modal/";
 
+import { EVENTS } from "../../assets/dev/EVENTS";
+
 const locales = {
   "en-US": enUS,
 };
@@ -35,13 +37,7 @@ const Calendar: FC = () => {
     start: new Date(),
     end: new Date(),
   });
-  const [events, setEvents] = useState<Event[]>([
-    {
-      title: "Learn cool stuff",
-      start: new Date(),
-      end: new Date(),
-    },
-  ]);
+  const [events, setEvents] = useState<Event[]>(EVENTS);
 
   // const onEventResize: withDragAndDropProps["onEventResize"] = (data) => {
   //   const { start, end } = data;
@@ -62,16 +58,6 @@ const Calendar: FC = () => {
       end,
     });
     setIsOpen(true);
-    // const title = window.prompt("New Event name");
-    // if (title)
-    //   setEvents([
-    //     ...events,
-    //     {
-    //       start,
-    //       end,
-    //       title,
-    //     },
-    //   ]);
   }, []);
 
   return (
@@ -89,6 +75,8 @@ const Calendar: FC = () => {
         showMultiDayTimes
       />
       <AddEvtModal
+        events={events}
+        setEvents={setEvents}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         startDt={eventTime.start}

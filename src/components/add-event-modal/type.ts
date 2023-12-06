@@ -23,3 +23,11 @@ export type FormikProps = {
   monthRelativeOrd: string;
   monthRelativeDay: string;
 };
+
+export type Event = {
+  id: string;
+  title: string;
+  start: Date;
+  end: Date;
+  resourceId: string;
+};
