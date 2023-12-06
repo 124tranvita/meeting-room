@@ -9,22 +9,35 @@ export type EntryEvent = {
   type: string;
   confirmed: string;
   repeatType: string;
-  repInterval: string;
-  repEndDt: string;
-  skip: boolean;
-  repDay0: string;
-  repDay1: string;
-  repDay2: string;
-  repDay3: string;
-  repDay4: string;
-  repDay5: string;
-  repDay6: string;
-  monthlySelect: string;
-  monthAbsolute: string;
-  monthRelativeOrd: string;
-  monthRelativeDay: string;
   duration?: string;
   lastUpdated?: string;
   createdBy?: string;
   modifiedBy?: string;
+};
+
+export const initialEntryEvent: EntryEvent = {
+  id: "",
+  title: "",
+  start: new Date(),
+  end: new Date(),
+  description: "",
+  allDay: false,
+  rooms: [],
+  type: "",
+  confirmed: "",
+  repeatType: "",
+  duration: "",
+  lastUpdated: "",
+  createdBy: "",
+  modifiedBy: "",
+};
+
+export type EventData = {
+  events: EntryEvent[];
+  event: EntryEvent;
+};
+
+export const initEventsData: EventData = {
+  events: [],
+  event: initialEntryEvent,
 };

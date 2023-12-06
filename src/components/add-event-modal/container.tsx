@@ -21,25 +21,19 @@ import { dateFormatter, getDuration } from "../../utils/date-func";
 import * as Constants from "../../common/constants";
 import { getDayPulldownData, getRepeatType } from "../../utils/utils";
 import { EntryEvent } from "../../common/model";
+import { useEventContext } from "../../hooks";
+import { ACT_SET_EVENT } from "../../context/eventContext/constants";
 import { FormikProps } from "./type";
 
 type Props = {
-  events: EntryEvent[];
-  setEvents: Dispatch<SetStateAction<EntryEvent[]>>;
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   startDt: Date;
   endDt: Date;
 };
 
-const AddEvtModal: FC<Props> = ({
-  events,
-  setEvents,
-  isOpen,
-  setIsOpen,
-  startDt,
-  endDt,
-}) => {
+const AddEvtModal: FC<Props> = ({ isOpen, setIsOpen, startDt, endDt }) => {
+  const { events, dispatchEvent } = useEventContext();
   /** Formik initial values */
   const initialValues: FormikProps = useMemo(() => {
     return {
@@ -83,31 +77,22 @@ const AddEvtModal: FC<Props> = ({
         type: values.type,
         confirmed: values.confirmed,
         repeatType: values.repeatType,
-        repInterval: values.repInterval,
-        repEndDt: values.repEndDt,
-        skip: values.skip,
-        repDay0: values.repDay0,
-        repDay1: values.repDay1,
-        repDay2: values.repDay2,
-        repDay3: values.repDay3,
-        repDay4: values.repDay4,
-        repDay5: values.repDay5,
-        repDay6: values.repDay6,
-        monthlySelect: values.monthlySelect,
-        monthAbsolute: values.monthAbsolute,
-        monthRelativeOrd: values.monthRelativeOrd,
-        monthRelativeDay: values.monthRelativeDay,
         duration: getDuration(values.startDt, values.endDt),
         lastUpdated: "",
         createdBy: "Username",
         modifiedBy: "",
       };
 
-      setEvents(events.concat(event));
+      dispatchEvent({
+        type: ACT_SET_EVENT,
+        payload: { events: [...events, event], event },
+      });
 
-      localStorage.setItem("events", JSON.stringify(events.concat(event)));
+      // setEvents(events.concat(event));
+
+      // localStorage.setItem("events", JSON.stringify(events.concat(event)));
     },
-    [events, setEvents]
+    [dispatchEvent, events]
   );
 
   /** Formik bag */
@@ -116,8 +101,6 @@ const AddEvtModal: FC<Props> = ({
     validateOnBlur: false,
     onSubmit,
   });
-
-  console.log({ values: formikBag.values });
 
   /** Set formik initial values */
   useEffect(() => {
@@ -141,7 +124,28 @@ const AddEvtModal: FC<Props> = ({
   }, [closeModal, formikBag]);
 
   return (
-    <Modal title="Add Entry" closeModal={closeModal} isOpen={isOpen}>
+    <Modal
+      title="Add Entry"
+      closeModal={closeModal}
+      isOpen={isOpen}
+      isScroll
+      buttonGroup={
+        <>
+          <Button
+            type="submit"
+            label="Add"
+            variant="primary"
+            onClick={hanldSubmit}
+          />
+          <Button
+            type="button"
+            label="Close"
+            variant="danger"
+            onClick={closeModal}
+          />
+        </>
+      }
+    >
       <FormikContext.Provider value={formikBag}>
         <Form>
           <Input label="Brief description" name="name" type="text" />
@@ -285,20 +289,6 @@ const AddEvtModal: FC<Props> = ({
             </div>
           </div>
         </Form>
-        <div className="flex justify-end mt-4">
-          <Button
-            type="submit"
-            label="Add"
-            variant="primary"
-            onClick={hanldSubmit}
-          />
-          <Button
-            type="button"
-            label="Close"
-            variant="danger"
-            onClick={closeModal}
-          />
-        </div>
       </FormikContext.Provider>
     </Modal>
   );

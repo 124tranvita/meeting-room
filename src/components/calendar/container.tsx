@@ -2,7 +2,6 @@ import { FC, useCallback, useState } from "react";
 import {
   Calendar as BigCalendar,
   dateFnsLocalizer,
-  Event,
   SlotInfo,
 } from "react-big-calendar";
 import format from "date-fns/format";
@@ -16,8 +15,10 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import { getDateRange } from "../../utils/date-fnc";
 import AddEvtModal from "../add-event-modal/";
 
-import { EVENTS } from "../../assets/dev/EVENTS";
 import { EntryEvent } from "../../common/model";
+import EventDetailModal from "../event-detail-modal";
+import { useEventContext } from "../../hooks";
+import { ACT_SET_EVENT } from "../../context/eventContext/constants";
 
 const locales = {
   "en-US": enUS,
@@ -32,25 +33,14 @@ const localizer = dateFnsLocalizer({
 });
 
 const Calendar: FC = () => {
+  const { events, dispatchEvent } = useEventContext();
   const { min, max } = getDateRange();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpenAddEntry, setIsOpenAddEntry] = useState(false);
+  const [isOpenEntryDetail, setIsOpenAddEntryDetail] = useState(false);
   const [eventTime, setEventTime] = useState({
     start: new Date(),
     end: new Date(),
   });
-  const [events, setEvents] = useState<EntryEvent[]>(EVENTS);
-
-  // const onEventResize: withDragAndDropProps["onEventResize"] = (data) => {
-  //   const { start, end } = data;
-
-  //   setEvents((currentEvents) => {
-  //     const firstEvent = {
-  //       start: new Date(start),
-  //       end: new Date(end),
-  //     };
-  //     return [...currentEvents, firstEvent];
-  //   });
-  // };
 
   const handleSelectSlot = useCallback((slotInfo: SlotInfo) => {
     const { start, end } = slotInfo;
@@ -58,18 +48,19 @@ const Calendar: FC = () => {
       start,
       end,
     });
-    setIsOpen(true);
+    setIsOpenAddEntry(true);
   }, []);
 
-  const handleSelectEvent = useCallback((event: Event) => {
-    // const { start, end } = event;
-    console.log(event);
-    // setEventTime({
-    //   start,
-    //   end,
-    // });
-    // setIsOpen(true);
-  }, []);
+  const handleSelectEvent = useCallback(
+    (event: EntryEvent) => {
+      dispatchEvent({
+        type: ACT_SET_EVENT,
+        payload: { events, event },
+      });
+      setIsOpenAddEntryDetail(true);
+    },
+    [dispatchEvent, events]
+  );
 
   return (
     <>
@@ -87,12 +78,14 @@ const Calendar: FC = () => {
         showMultiDayTimes
       />
       <AddEvtModal
-        events={events}
-        setEvents={setEvents}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
+        isOpen={isOpenAddEntry}
+        setIsOpen={setIsOpenAddEntry}
         startDt={eventTime.start}
         endDt={eventTime.end}
+      />
+      <EventDetailModal
+        isOpen={isOpenEntryDetail}
+        setIsOpen={setIsOpenAddEntryDetail}
       />
     </>
   );

@@ -22,10 +22,6 @@ export type FormikProps = {
   monthAbsolute: string;
   monthRelativeOrd: string;
   monthRelativeDay: string;
-  duration?: string;
-  lastUpdated?: string;
-  createdBy?: string;
-  modifiedBy?: string;
 };
 
 export type Event = {
