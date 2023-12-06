@@ -12,6 +12,7 @@ import {
   Checkbox,
   Input,
   Radio,
+  RadioGroup,
   Select,
   TextArea,
 } from "../../common/components/formik";
@@ -30,8 +31,14 @@ const AddEvtModal: FC<Props> = ({ isOpen, setIsOpen, startDt, endDt }) => {
   /** Formik initial values */
   const initialValues: FormikProps = useMemo(() => {
     return {
+      name: "",
+      description: "",
       startDt: dateFormatter(startDt, "yyyy-MM-dd'T'HH:mm"),
       endDt: dateFormatter(endDt, "yyyy-MM-dd'T'HH:mm"),
+      allDay: "",
+      rooms: [],
+      type: Constants.BookingType.External,
+      confirmed: "",
     };
   }, [endDt, startDt]);
 
@@ -43,6 +50,8 @@ const AddEvtModal: FC<Props> = ({ isOpen, setIsOpen, startDt, endDt }) => {
     validateOnBlur: false,
     onSubmit,
   });
+
+  console.log({ values: formikBag.values });
 
   /** Set formik initial values */
   useEffect(() => {
@@ -63,7 +72,9 @@ const AddEvtModal: FC<Props> = ({ isOpen, setIsOpen, startDt, endDt }) => {
           <TextArea label="Full description" name="description" />
           <Input label="Start" name="startDt" type="datetime-local" />
           <Input label="End" name="endDt" type="datetime-local" />
-          <Checkbox label="All day" name="allDay" />
+          <Checkbox name="allDay">
+            <span>All day</span>
+          </Checkbox>
           <Select label="Rooms" name="rooms" multiple>
             <option value={"room1"}>Room 1</option>
             <option value={"room2"}>Room 2</option>
@@ -72,7 +83,22 @@ const AddEvtModal: FC<Props> = ({ isOpen, setIsOpen, startDt, endDt }) => {
             <option value={Constants.BookingType.External}>External</option>
             <option value={Constants.BookingType.Internal}>Internal</option>
           </Select>
-          <Radio label="confirmed" name="confirmed" />
+          <RadioGroup label="Confirmation status" name="confirmed">
+            <Radio name="confirmed" value={Constants.ConfirmStatus.Confirmed}>
+              <span>Confirmed</span>
+            </Radio>
+            <Radio name="confirmed" value={Constants.ConfirmStatus.Tentative}>
+              <span>Tentative</span>
+            </Radio>
+          </RadioGroup>
+          <RadioGroup label="Repeat type" name="confirmed">
+            <Radio name="confirmed" value={Constants.ConfirmStatus.Confirmed}>
+              <span>Confirmed</span>
+            </Radio>
+            <Radio name="confirmed" value={Constants.ConfirmStatus.Tentative}>
+              <span>Tentative</span>
+            </Radio>
+          </RadioGroup>
         </Form>
       </FormikContext.Provider>
     </Modal>
