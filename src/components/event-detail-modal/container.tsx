@@ -3,6 +3,7 @@ import { Button, Modal } from "../../common/components";
 import DetailInfo from "./detail-info";
 import EditEvtModal from "../edit-event-modal";
 import { useEventContext } from "../../hooks";
+import DeleteEvtModal from "../delete-event-modal";
 
 type Props = {
   isOpen: boolean;
@@ -12,10 +13,16 @@ type Props = {
 const EventDetailModal: FC<Props> = ({ isOpen, setIsOpen }) => {
   const { event } = useEventContext();
   const [isOpenEditModal, setIsOpenEditModal] = useState(false);
+  const [isOpenDelModal, setIsOpenDelModal] = useState(false);
 
   /** Handle open edit modal */
   const openEditModal = useCallback(() => {
     setIsOpenEditModal(true);
+  }, []);
+
+  /** Handle open delete modal */
+  const openDelModal = useCallback(() => {
+    setIsOpenDelModal(true);
   }, []);
 
   /** Handle close modal */
@@ -46,13 +53,18 @@ const EventDetailModal: FC<Props> = ({ isOpen, setIsOpen }) => {
             type="button"
             label="Delete"
             variant="danger"
-            onClick={closeModal}
+            onClick={openDelModal}
           />
         </>
       }
     >
       <DetailInfo event={event} />
       <EditEvtModal isOpen={isOpenEditModal} setIsOpen={setIsOpenEditModal} />
+      <DeleteEvtModal
+        isOpen={isOpenDelModal}
+        setIsOpen={setIsOpenDelModal}
+        setIsOpenDetailEvtModal={setIsOpen}
+      />
     </Modal>
   );
 };

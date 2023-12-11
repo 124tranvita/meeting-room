@@ -88,9 +88,7 @@ const AddEvtModal: FC<Props> = ({ isOpen, setIsOpen, startDt, endDt }) => {
         payload: { events: [...events, event], event },
       });
 
-      // setEvents(events.concat(event));
-
-      // localStorage.setItem("events", JSON.stringify(events.concat(event)));
+      localStorage.setItem("events", JSON.stringify([...events, event]));
     },
     [dispatchEvent, events]
   );

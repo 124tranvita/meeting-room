@@ -8,9 +8,12 @@ enum Variant {
 }
 
 const VariantMap = {
-  [Variant.Primary]: "bg-blue-100 text-blue-900 hover:bg-blue-200",
-  [Variant.Success]: "bg-green-100 text-green-900 hover:bg-green-200",
-  [Variant.Danger]: "bg-red-100 text-red-900 hover:bg-red-200",
+  [Variant.Primary]:
+    "bg-blue-100 text-blue-900 hover:bg-blue-200 focus-visible:ring-blue-500 hover:border-blue-500",
+  [Variant.Success]:
+    "bg-green-100 text-green-900 hover:bg-green-200 focus-visible:ring-green-500 hover:border-green-500",
+  [Variant.Danger]:
+    "bg-red-100 text-red-900 hover:bg-red-200 focus-visible:ring-red-500 hover:border-red-500",
 };
 
 //   const Disabled = "bg-slate-200 text-slate-400 hover:bg-slate-200";
@@ -34,7 +37,7 @@ export const Button: React.FC<ButtonProps> = ({
       <button
         type={type}
         className={classNames(
-          "w-24 inline-flex justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2",
+          "w-24 inline-flex justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium focus:outline-none focus-visible:ring-1 focus-visible:ring-offset-1",
           VariantMap[variant],
           `${disabled ? "bg-slate-200 hover:bg-slate-200 text-slate-400" : ""}`
         )}

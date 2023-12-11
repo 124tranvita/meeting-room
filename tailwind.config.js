@@ -9,6 +9,9 @@ export default {
         "80vh": "80vh",
         "85vh": "85vh",
       },
+      maxWidth: {
+        "1280px": "1280px",
+      },
     },
   },
   plugins: [],

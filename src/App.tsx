@@ -1,21 +1,29 @@
-import Calendar from "./components/calendar/";
-import "./App.css";
-import { EventContextProvider } from "./context";
+import { FC, useEffect } from "react";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { EVENTS } from "./assets/dev/EVENTS";
-import { useEffect } from "react";
+// import { Navbar } from "./common/components";
+import { CalendarPages } from "./pages";
 
-function App() {
+const App: FC = () => {
   useEffect(() => {
     localStorage.setItem("events", JSON.stringify(EVENTS));
   }, []);
 
   return (
-    <div className="relative">
-      <EventContextProvider>
-        <Calendar />
-      </EventContextProvider>
-    </div>
+    <main className="relative">
+      <Router>
+        {/* <Navbar /> */}
+        <div className="mt-3 mx-auto max-w-1280px text-center">
+          <Routes>
+            <Route path="/" element={<CalendarPages />} />
+            {/* <Route path="/about" element={<About />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/contact" element={<Contact />} /> */}
+          </Routes>
+        </div>
+      </Router>
+    </main>
   );
-}
+};
 
 export default App;

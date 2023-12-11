@@ -75,6 +75,8 @@ const EditEvtModal: FC<Props> = ({ isOpen, setIsOpen }) => {
         rooms: values.rooms,
         type: values.type,
         confirmed: values.confirmed,
+        lastUpdated: new Date().toISOString(),
+        modifiedBy: "modify-user",
       };
 
       dispatchEvent({
@@ -85,13 +87,10 @@ const EditEvtModal: FC<Props> = ({ isOpen, setIsOpen }) => {
         },
       });
 
-      // setEvent(updated);
-      // setEvents(standardizationUpdateData(updated, events));
-
-      // localStorage.setItem(
-      //   "events",
-      //   JSON.stringify(standardizationUpdateData(updated, events))
-      // );
+      localStorage.setItem(
+        "events",
+        JSON.stringify(standardizationUpdateData(updated, events))
+      );
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [dispatchEvent]

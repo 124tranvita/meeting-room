@@ -4,7 +4,7 @@ export type EntryEvent = {
   start: Date;
   end: Date;
   description: string;
-  allDay: boolean;
+  allDay: boolean | null | undefined;
   rooms: string[];
   type: string;
   confirmed: string;
