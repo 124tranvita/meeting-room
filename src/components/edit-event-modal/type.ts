@@ -3,7 +3,7 @@ export type FormikProps = {
   description: string;
   startDt: string;
   endDt: string;
-  allDay: boolean;
+  allDay: boolean | null | undefined;
   rooms: string[];
   type: string;
   confirmed: string;

@@ -1,5 +1,7 @@
 import * as DateFns from "date-fns";
 
+const today = new Date();
+
 /**
  * Add hours to current time
  */
@@ -94,4 +96,56 @@ export const getDuration = (value1: string | Date, value2: string | Date) => {
   const arr = [years, months, days, hours, minutes].filter((item) => item);
 
   return arr.join(" ");
+};
+
+export const getDateRange = () => {
+  const min = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate(),
+    8
+  );
+
+  const max = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate(),
+    18
+  );
+
+  return { min, max };
+};
+
+export const getFirstDayOfWeek = (value: string | Date) => {
+  // clone date object, so we don't mutate it
+  const date = new Date(value);
+  const day = date.getDay(); //  get day of week
+
+  // 👇️ day of month - day of week (-6 if Sunday), otherwise +1
+  const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+
+  return new Date(date.setDate(diff));
+};
+
+export const getDayOfWeek = (value: string | Date) => {
+  const firstDay = getFirstDayOfWeek(value);
+  const lastDay = new Date(firstDay);
+  lastDay.setDate(lastDay.getDate() + 6);
+
+  return { firstDay, lastDay };
+};
+
+/**
+ * Get First (Sunday) and Last Day (Saturday) of the current Week
+ */
+export const getDayOfWeekSUN = (value: string | Date) => {
+  // clone date object, so we don't mutate it
+  const date = new Date(value);
+  // Get the first day of the current week (Sunday)
+  const firstDay = new Date(date.setDate(date.getDate() - date.getDay()));
+
+  // Get the last day of the current week (Saturday)
+  const lastDay = new Date(date.setDate(date.getDate() - date.getDay() + 6));
+
+  return { firstDay, lastDay };
 };

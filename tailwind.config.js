@@ -12,6 +12,9 @@ export default {
       maxWidth: {
         "1280px": "1280px",
       },
+      minWidth: {
+        "78px": "78px",
+      },
     },
   },
   plugins: [],

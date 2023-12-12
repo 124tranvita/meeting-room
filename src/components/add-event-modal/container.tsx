@@ -21,7 +21,7 @@ import { dateFormatter, getDuration } from "../../utils/date-func";
 import * as Constants from "../../common/constants";
 import { getDayPulldownData, getRepeatType } from "../../utils/utils";
 import { EntryEvent } from "../../common/model";
-import { useEventContext } from "../../hooks";
+import { useEventContext, useOutlookCalendarSync } from "../../hooks";
 import { ACT_SET_EVENT } from "../../context/eventContext/constants";
 import { FormikProps } from "./type";
 
@@ -34,6 +34,8 @@ type Props = {
 
 const AddEvtModal: FC<Props> = ({ isOpen, setIsOpen, startDt, endDt }) => {
   const { events, dispatchEvent } = useEventContext();
+  const { callCalendarApi } = useOutlookCalendarSync();
+
   /** Formik initial values */
   const initialValues: FormikProps = useMemo(() => {
     return {
@@ -83,6 +85,43 @@ const AddEvtModal: FC<Props> = ({ isOpen, setIsOpen, startDt, endDt }) => {
         modifiedBy: "",
       };
 
+      callCalendarApi({
+        method: "POST",
+        url: `/events`,
+        headers: {
+          accept: "*/*",
+        },
+        data: {
+          subject: values.name,
+          body: {
+            contentType: "HTML",
+            content: values.description,
+          },
+          start: {
+            dateTime: values.startDt,
+            timeZone: "UTC",
+          },
+          end: {
+            dateTime: values.endDt,
+            timeZone: "UTC",
+          },
+          location: {
+            displayName: values.rooms.join(", "),
+          },
+          attendees: [
+            {
+              emailAddress: {
+                address: "samanthab@contoso.onmicrosoft.com",
+                name: "Samantha Booth",
+              },
+              type: "required",
+            },
+          ],
+          allowNewTimeProposals: true,
+          transactionId: "7E163156-7762-4BEB-A1C6-729EA81755A7",
+        },
+      });
+
       dispatchEvent({
         type: ACT_SET_EVENT,
         payload: { events: [...events, event], event },
@@ -90,7 +129,7 @@ const AddEvtModal: FC<Props> = ({ isOpen, setIsOpen, startDt, endDt }) => {
 
       localStorage.setItem("events", JSON.stringify([...events, event]));
     },
-    [dispatchEvent, events]
+    [callCalendarApi, dispatchEvent, events]
   );
 
   /** Formik bag */

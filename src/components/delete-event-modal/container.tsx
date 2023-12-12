@@ -1,5 +1,5 @@
 import { Dispatch, FC, SetStateAction, useCallback } from "react";
-import { useEventContext } from "../../hooks";
+import { useEventContext, useOutlookCalendarSync } from "../../hooks";
 import { Button, Modal, Typography } from "../../common/components";
 import { EntryEvent, initialEntryEvent } from "../../common/model";
 import { ACT_SET_EVENT } from "../../context/eventContext/constants";
@@ -16,9 +16,18 @@ const DeleteEvtModal: FC<Props> = ({
   setIsOpenDetailEvtModal,
 }) => {
   const { event, events, dispatchEvent } = useEventContext();
+  const { callCalendarApi } = useOutlookCalendarSync();
 
   const handleSubmit = useCallback(() => {
     const data = events.filter((item: EntryEvent) => item.id !== event.id);
+
+    callCalendarApi({
+      method: "DELETE",
+      url: `/events/${event.id}`,
+      headers: {
+        accept: "*/*",
+      },
+    });
 
     dispatchEvent({
       type: ACT_SET_EVENT,
@@ -27,7 +36,14 @@ const DeleteEvtModal: FC<Props> = ({
 
     setIsOpen(false);
     setIsOpenDetailEvtModal(false);
-  }, [dispatchEvent, event.id, events, setIsOpen, setIsOpenDetailEvtModal]);
+  }, [
+    callCalendarApi,
+    dispatchEvent,
+    event.id,
+    events,
+    setIsOpen,
+    setIsOpenDetailEvtModal,
+  ]);
 
   /** Handle close modal */
   const closeModal = useCallback(() => {

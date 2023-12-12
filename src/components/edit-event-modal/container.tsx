@@ -20,7 +20,7 @@ import { dateFormatter } from "../../utils/date-func";
 import { standardizationUpdateData } from "../../utils/response";
 import * as Constants from "../../common/constants";
 import { EntryEvent } from "../../common/model";
-import { useEventContext } from "../../hooks";
+import { useEventContext, useOutlookCalendarSync } from "../../hooks";
 import { FormikProps } from "./type";
 import { ACT_SET_EVENT } from "../../context/eventContext/constants";
 
@@ -31,6 +31,9 @@ type Props = {
 
 const EditEvtModal: FC<Props> = ({ isOpen, setIsOpen }) => {
   const { event, events, dispatchEvent } = useEventContext();
+  const { callCalendarApi } = useOutlookCalendarSync();
+
+  console.log({ event });
 
   /** Formik initial values */
   const initialValues: FormikProps = useMemo(() => {
@@ -79,6 +82,29 @@ const EditEvtModal: FC<Props> = ({ isOpen, setIsOpen }) => {
         modifiedBy: "modify-user",
       };
 
+      callCalendarApi({
+        method: "PATCH",
+        url: `/events/${event.id}`,
+        headers: {
+          accept: "*/*",
+        },
+        data: {
+          originalStartTimeZone: values.startDt,
+          originalEndTimeZone: values.endDt,
+          responseStatus: {
+            response: "none",
+            time: new Date(),
+          },
+          recurrence: null,
+          reminderMinutesBeforeStart: 99,
+          isOnlineMeeting: true,
+          onlineMeetingProvider: "teamsForBusiness",
+          isReminderOn: true,
+          hideAttendees: false,
+          categories: ["Red category"],
+        },
+      });
+
       dispatchEvent({
         type: ACT_SET_EVENT,
         payload: {
@@ -92,8 +118,7 @@ const EditEvtModal: FC<Props> = ({ isOpen, setIsOpen }) => {
         JSON.stringify(standardizationUpdateData(updated, events))
       );
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [dispatchEvent]
+    [callCalendarApi, dispatchEvent, event, events]
   );
 
   /** Formik bag */
