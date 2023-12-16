@@ -44,7 +44,9 @@ const Typography: React.FC<TypographyProps> = ({
 }) => {
   return (
     <div className="flex items-center">
-      <p className={classNames(TypeMap[type], SizeMap[size])}>{text}</p>
+      <p className={`w-full ${classNames(TypeMap[type], SizeMap[size])}`}>
+        {text}
+      </p>
     </div>
   );
 };

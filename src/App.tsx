@@ -2,9 +2,14 @@ import { FC, useEffect } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { EVENTS } from "./assets/dev/EVENTS";
 // import { Navbar } from "./common/components";
-import { CalendarPages } from "./pages";
+import { CalendarPages, ConfigurationPage, HomePage } from "./pages";
+import { useDeviceConfigContext } from "./hooks";
 
 const App: FC = () => {
+  const { device } = useDeviceConfigContext();
+
+  console.log({ device });
+
   useEffect(() => {
     localStorage.setItem("events", JSON.stringify(EVENTS));
   }, []);
@@ -13,9 +18,15 @@ const App: FC = () => {
     <main className="relative">
       <Router>
         {/* <Navbar /> */}
-        <div className="mt-3 mx-auto max-w-1280px text-center">
+        <div className="mx-auto max-w-1280px text-center">
           <Routes>
-            <Route path="/" element={<CalendarPages />} />
+            <Route
+              path="/"
+              element={
+                device.isConfigured ? <HomePage /> : <ConfigurationPage />
+              }
+            />
+            <Route path="/calendar" element={<CalendarPages />} />
             {/* <Route path="/about" element={<About />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/contact" element={<Contact />} /> */}

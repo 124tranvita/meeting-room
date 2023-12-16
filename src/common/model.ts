@@ -41,3 +41,15 @@ export const initEventsData: EventData = {
   events: [],
   event: initialEntryEvent,
 };
+
+export type DeviceConfig = {
+  roomId: string;
+  createdAt: Date;
+  isConfigured: boolean;
+};
+
+export const initialDeviceConfig: DeviceConfig = {
+  roomId: "",
+  createdAt: new Date(),
+  isConfigured: false,
+};

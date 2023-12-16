@@ -69,7 +69,6 @@ const EditEvtModal: FC<Props> = ({ isOpen, setIsOpen }) => {
     (values: FormikProps) => {
       const updated: EntryEvent = {
         ...event,
-        id: values.name,
         title: values.name,
         start: new Date(values.startDt),
         end: new Date(values.endDt),
@@ -89,6 +88,7 @@ const EditEvtModal: FC<Props> = ({ isOpen, setIsOpen }) => {
           accept: "*/*",
         },
         data: {
+          subject: values.name,
           originalStartTimeZone: values.startDt,
           originalEndTimeZone: values.endDt,
           responseStatus: {

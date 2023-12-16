@@ -1,3 +1,9 @@
+export enum Events {
+  None,
+  Init,
+  Submit,
+}
+
 export enum BookingType {
   Internal = "I",
   External = "E",

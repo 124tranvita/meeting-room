@@ -1,3 +1,5 @@
 import CalendarPages from "./calendar";
+import ConfigurationPage from "./configuration";
+import HomePage from "./home";
 
-export { CalendarPages };
+export { HomePage, ConfigurationPage, CalendarPages };
